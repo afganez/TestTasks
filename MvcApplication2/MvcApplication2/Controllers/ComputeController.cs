@@ -17,7 +17,7 @@ namespace MvcApplication2.Controllers
             return Calc(x);
         }
 
-        public static double Calc(string s)
+        public double Calc(string s)
         {
             s = '(' + s + ')';
             var operandStack = new Stack<double>();
@@ -28,7 +28,7 @@ namespace MvcApplication2.Controllers
 
             do
             {
-                symbol = getSymbol(s, ref pos);
+                symbol = GetSymbol(s, ref pos);
 
                 // Если symbol - операнд
                 if (symbol is double) 
@@ -47,7 +47,7 @@ namespace MvcApplication2.Controllers
                     }
                     else
                     {
-                        while (canPop((char)symbol, functionsStack)) // Если можно вытащить из стека, то вытаскиваем
+                        while (CanPop((char)symbol, functionsStack)) // Если можно вытащить из стека, то вытаскиваем
                             popFunction(operandStack, functionsStack);
 
                         functionsStack.Push((char)symbol); // Заносим новую операцию в стек
@@ -63,7 +63,7 @@ namespace MvcApplication2.Controllers
             return operandStack.Pop();
         }
 
-        private static object getSymbol(string s, ref int pos)
+        private object GetSymbol(string s, ref int pos)
         {
             readWhiteSpace(s, ref pos);
 
@@ -75,7 +75,7 @@ namespace MvcApplication2.Controllers
                 return readFunction(s, ref pos);
         }
 
-        private static void popFunction(Stack<double> operandStack, Stack<char> functionsStack)
+        private void popFunction(Stack<double> operandStack, Stack<char> functionsStack)
         {
             double b = operandStack.Pop();
             double a = operandStack.Pop();
@@ -92,7 +92,7 @@ namespace MvcApplication2.Controllers
             }
         }
 
-        private static bool canPop(char operation, Stack<char> functionsStack)
+        private bool CanPop(char operation, Stack<char> functionsStack)
         {
             if (functionsStack.Count == 0)
                 return false;
@@ -102,7 +102,7 @@ namespace MvcApplication2.Controllers
             return p1 >= 0 && p2 >= 0 && p1 >= p2;
         }
 
-        private static int getPriority(char operation)
+        private int getPriority(char operation)
         {
             switch (operation)
             {
@@ -119,13 +119,13 @@ namespace MvcApplication2.Controllers
             }
         }
 
-        private static char readFunction(string s, ref int pos)
+        private char readFunction(string s, ref int pos)
         {
             // Так как все операции состоят из одного символа прибавляем только на 1
             return s[pos++];
         }
 
-        private static string readDouble(string s, ref int pos)
+        private string readDouble(string s, ref int pos)
         {
             string res = "";
             while (pos < s.Length && (char.IsDigit(s[pos]) || s[pos] == '.'))
@@ -135,7 +135,7 @@ namespace MvcApplication2.Controllers
         }
 
         // Считываем все проблемы и прочие символы.
-        private static void readWhiteSpace(string s, ref int pos)
+        private void readWhiteSpace(string s, ref int pos)
         {
             while (pos < s.Length && char.IsWhiteSpace(s[pos]))
                 pos++;
